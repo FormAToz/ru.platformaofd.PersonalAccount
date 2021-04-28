@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+        "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+    <!-- Base Define -->
+    <definition name="base.definition"
+                template="/WEB-INF/layouts/classic.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="header" value="/WEB-INF/basefragments/_header.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/basefragments/_menu.jsp" />
+        <put-attribute name="body" value="" />
+        <put-attribute name="footer" value="/WEB-INF/basefragments/_footer.jsp" />
+    </definition>
+
+    <!-- Home Page -->
+    <definition name="homePage" extends="base.definition">
+        <put-attribute name="title" value="Home Page" />
+        <put-attribute name="body" value="/WEB-INF/bodyfragments/_home.jsp" />
+    </definition>
+
+    <!-- Register Page -->
+    <definition name="registerPage" extends="base.definition">
+        <put-attribute name="title" value="Register" />
+        <put-attribute name="body" value="/WEB-INF/bodyfragments/_registration.jsp" />
+    </definition>
+
+    <!-- Login Page -->
+    <definition name="loginPage" extends="base.definition">
+        <put-attribute name="title" value="Login" />
+        <put-attribute name="body" value="/WEB-INF/bodyfragments/_login.jsp" />
+    </definition>
+
+    <!-- User Page -->
+    <definition name="userDetails" extends="base.definition">
+        <put-attribute name="title" value="User Details" />
+        <put-attribute name="body" value="/WEB-INF/bodyfragments/_userdetails.jsp" />
+    </definition>
+
+</tiles-definitions>
