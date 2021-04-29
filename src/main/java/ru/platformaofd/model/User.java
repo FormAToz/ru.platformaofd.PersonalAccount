@@ -1,5 +1,7 @@
 package ru.platformaofd.model;
 
+import org.springframework.data.annotation.Id;
+
 import java.util.List;
 
 /**
@@ -7,19 +9,39 @@ import java.util.List;
  */
 public class User {
 
+    @Id
+    private Long id;
+
     private String login;
+
     private String password;
+
     private List<Balance> balanceList;
+
+
+    public User() {
+    }
+
+    public User(Long id, String login, String password) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+    }
 
     public User(String login, String password) {
         this.login = login;
         this.password = password;
     }
 
-    public User(String login, String password, List<Balance> balanceList) {
+    public User(Long id, String login, String password, List<Balance> balanceList) {
+        this.id = id;
         this.login = login;
         this.password = password;
         this.balanceList = balanceList;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getLogin() {

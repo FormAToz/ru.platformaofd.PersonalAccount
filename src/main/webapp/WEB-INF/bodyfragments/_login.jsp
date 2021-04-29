@@ -8,7 +8,7 @@
     <label for="login"><b>Логин</b></label>
     <input type="text" placeholder="Введите логин" name="login" required>
 
-    <label for="psw"><b>Пароль</b></label>
+    <label for="password"><b>Пароль</b></label>
     <input type="password" placeholder="Введите пароль" name="password" required>
     <hr>
 
