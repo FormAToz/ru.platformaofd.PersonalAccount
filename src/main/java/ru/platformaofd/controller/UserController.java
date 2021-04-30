@@ -10,6 +10,8 @@ import org.springframework.web.servlet.ModelAndView;
 import ru.platformaofd.model.enums.BalanceType;
 import ru.platformaofd.service.UserService;
 
+import java.security.Principal;
+
 @Controller
 @RequestMapping("users")
 public class UserController {
@@ -22,8 +24,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ModelAndView login(@RequestParam String login, @RequestParam String password) {
-        userService.login(login, password);
-        return getUserDetails();
+        return new ModelAndView("donePage", "response", userService.login(login, password));
     }
 
     @GetMapping("/logout")
@@ -39,16 +40,17 @@ public class UserController {
 
     @GetMapping("/details")
     @PreAuthorize("hasAuthority('user:write')")
-    public ModelAndView getUserDetails() {
+    public ModelAndView getUserDetails(Principal principal) {
         ModelAndView modelAndView = new ModelAndView("userDetails");
         modelAndView.addObject("types", BalanceType.values());
         modelAndView.addObject("user", userService.getLoggedUser());
+        modelAndView.addObject("principal", principal);
         return modelAndView;
     }
 
     @PostMapping("/details")
     @PreAuthorize("hasAuthority('user:write')")
     public ModelAndView createNewBalance(@RequestParam BalanceType type, @RequestParam long count) {
-        return new ModelAndView("donePage", "response", userService.addNewBalance(type, count));
+        return new ModelAndView("redirect:details", "response", userService.addNewBalance(type, count));
     }
 }

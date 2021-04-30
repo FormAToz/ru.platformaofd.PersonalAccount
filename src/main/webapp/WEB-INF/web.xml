@@ -5,8 +5,6 @@
     http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          id="WebApp_ID" version="3.0">
 
-  <display-name>ProfileService</display-name>
-
 <!--  Это обеспечивает подключение к веб-инфраструктуре Spring Security. -->
 <!--  DelegatingFilterProxy- это класс Spring Framework, который делегирует реализацию фильтра, -->
 <!--  который определяется как компонент Spring в контексте вашего приложения. В этом случае компонент -->
