@@ -7,7 +7,7 @@ public enum ErrorCode {
     USER_NOT_EXISTS(3),
     PASSWORD_INCORRECT(4);
 
-    private int code;
+    private final int code;
 
     ErrorCode(int code) {
         this.code = code;

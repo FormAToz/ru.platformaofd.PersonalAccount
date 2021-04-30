@@ -1,13 +1,20 @@
 package ru.platformaofd.service;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.platformaofd.exception.TechnicalException;
 import ru.platformaofd.exception.UserAlreadyExistsException;
+import ru.platformaofd.exception.UserNotExistException;
 import ru.platformaofd.model.Balance;
 import ru.platformaofd.model.User;
 import ru.platformaofd.model.enums.BalanceType;
 import ru.platformaofd.model.enums.ErrorCode;
+import ru.platformaofd.model.enums.Role;
 import ru.platformaofd.repository.UserRepository;
+import ru.platformaofd.util.Utils;
 
 import java.util.List;
 
@@ -16,10 +23,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BalanceService balanceService;
+    private final AuthenticationManager authenticationManager;
 
-    public UserService(UserRepository userRepository, BalanceService balanceService) {
+    public UserService(UserRepository userRepository, BalanceService balanceService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.balanceService = balanceService;
+        this.authenticationManager = authenticationManager;
     }
 
 
@@ -30,10 +39,11 @@ public class UserService {
      * @return строка с сообщением в случае успешной регистрации
      */
     public String register(String login, String password) {
-        //FIXME переделать, когда подключится security
+        // проверяем существование пользователя в базе
         checkExistingInDbByLogin(login);
-        saveUser(new User(login, password));
-
+        // все пользователи по умолчанию получают роль USER
+        saveUser(new User(login, Utils.encodePassword(password), Role.USER));
+        //TODO статус ОК
         return String.format("Пользователь с логином %s успешно зарегистрирован", login);
     }
 
@@ -66,14 +76,25 @@ public class UserService {
     }
 
     /**
-     * Метод входа в приложение для зарегестрированных пользователей
+     * Метод входа в приложение для зарегистрированных пользователей
      * @param login логин пользователя
      * @param password пароль пошльзователя
      * @return строка с сообщением, в случае успешного входа
      */
     public String login(String login, String password) {
-        //FIXME оставить проверку логина и пароля для security
+        Authentication auth = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(login, password));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        org.springframework.security.core.userdetails.User user =
+                (org.springframework.security.core.userdetails.User) auth.getPrincipal();
+        //TODO статус ОК
         return "Вы вошли в систему";
+    }
+
+    public String logout() {
+        SecurityContextHolder.clearContext();
+        //TODO статус ОК
+        return "Вы вышли из системы";
     }
 
     /**
@@ -81,13 +102,25 @@ public class UserService {
      * @return объект User - авторизированный пользователь
      */
     public User getLoggedUser() {
-        //TODO сменить. когда будет security
-
         //TODO Изменить получение списка балансов по условию ТЗ (стрим)
+        String loggedUserLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+        User loggedUser = getByLogin(loggedUserLogin);
 
-        User loggedUser = new User(1L, "Test Login", "Test Password", getAllBalancesByUserId(1L));
-
+        loggedUser.setBalanceList(getAllBalancesByUserId(loggedUser.getId()));
         return loggedUser;
+    }
+
+    /**
+     * Метод получения пользователя по логину
+     * @param login логин пользователя
+     * @return пользователь(объект User)
+     * @throws UserNotExistException в случае, если пользователь с таким логином не существует в базе
+     */
+    public User getByLogin(String login) {
+        return userRepository.findByLogin(login).orElseThrow(() -> new UserNotExistException(
+                        String.format("Пользователя с логином %s не существует", login),
+                        ErrorCode.USER_NOT_EXISTS.getCode())
+        );
     }
 
     /**
@@ -96,14 +129,6 @@ public class UserService {
      */
     public List<Balance> getAllBalancesByUserId(Long userId) {
         return balanceService.getAllBalancesByUserId(userId);
-    }
-
-    /**
-     * Метод получения всех зарегестрированных пользователей
-     * @return Список зарегистрированных пользователей
-     */
-    public List<User> getAll() {
-        return userRepository.getAll();
     }
 
     /**
@@ -116,6 +141,7 @@ public class UserService {
         User loggedUser = getLoggedUser();
 
         balanceService.saveBalance(new Balance(loggedUser.getId(), type, count));
+        //TODO статус ОК
         return String.format("Баланс для пользователя \"%s\" успешно добавлен", loggedUser.getLogin());
     }
 }

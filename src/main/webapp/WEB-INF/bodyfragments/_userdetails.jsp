@@ -1,7 +1,7 @@
 <%@ page contentType='text/html; charset=UTF-8' %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<p><strong>Баланс пользователя</strong></p>
+<h2><strong>Баланс пользователя</strong></h2>
 
 <table class="table">
 <thead>
@@ -26,7 +26,7 @@
 
 <hr>
 
-<strong>Добавление нового баланса</strong>
+<h2><strong>Добавление нового баланса</strong></h2>
 
 <form action="/users/details" method="post">
 

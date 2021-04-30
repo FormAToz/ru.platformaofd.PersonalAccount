@@ -5,7 +5,23 @@
 <head>
 <title><tiles:getAsString name="title" /></title>
 <style type="text/css">
-    .table td, th {border:1px solid black;padding:10px}
+
+    .table td, th {
+        border: 1px solid black;
+        padding: 10px;
+        }
+
+    #header, #footer {
+        background: #E0E0E0;
+        height: 55px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    #footer {
+            height: 20px;
+        }
+
 </style>
 </head>
 

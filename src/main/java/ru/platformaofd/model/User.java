@@ -1,6 +1,7 @@
 package ru.platformaofd.model;
 
 import org.springframework.data.annotation.Id;
+import ru.platformaofd.model.enums.Role;
 
 import java.util.List;
 
@@ -11,13 +12,10 @@ public class User {
 
     @Id
     private Long id;
-
     private String login;
-
     private String password;
-
     private List<Balance> balanceList;
-
+    private Role role;
 
     public User() {
     }
@@ -28,16 +26,25 @@ public class User {
         this.password = password;
     }
 
-    public User(String login, String password) {
+    public User(String login, String password, Role role) {
         this.login = login;
         this.password = password;
+        this.role = role;
     }
 
-    public User(Long id, String login, String password, List<Balance> balanceList) {
+    public User(Long id, String login, String password, Role role) {
+        this.id = id;
+        this.login = login;
+        this.password = password;
+        this.role = role;
+    }
+
+    public User(Long id, String login, String password, List<Balance> balanceList, Role role) {
         this.id = id;
         this.login = login;
         this.password = password;
         this.balanceList = balanceList;
+        this.role = role;
     }
 
     public Long getId() {
@@ -66,5 +73,13 @@ public class User {
 
     public void setBalanceList(List<Balance> balanceList) {
         this.balanceList = balanceList;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

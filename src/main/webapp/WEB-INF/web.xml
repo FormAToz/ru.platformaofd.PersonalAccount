@@ -7,4 +7,22 @@
 
   <display-name>ProfileService</display-name>
 
+<!--  Это обеспечивает подключение к веб-инфраструктуре Spring Security. -->
+<!--  DelegatingFilterProxy- это класс Spring Framework, который делегирует реализацию фильтра, -->
+<!--  который определяется как компонент Spring в контексте вашего приложения. В этом случае компонент -->
+<!--  называется "springSecurityFilterChain", который представляет собой компонент внутренней инфраструктуры, -->
+<!--  созданный пространством имен для управления веб-безопасностью. Обратите внимание, что вам не следует -->
+<!--  использовать это имя bean-компонента самостоятельно. После того, как вы добавили это в свой web.xml, -->
+<!--  вы готовы приступить к редактированию файла контекста вашего приложения. -->
+<!--  Сервисы веб-безопасности настраиваются с помощью <http>элемента.-->
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
 </web-app>

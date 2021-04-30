@@ -1,5 +1,6 @@
 package ru.platformaofd.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,12 +23,13 @@ public class UserController {
     @PostMapping("/login")
     public ModelAndView login(@RequestParam String login, @RequestParam String password) {
         userService.login(login, password);
-        return new ModelAndView("userDetails");
+        return getUserDetails();
     }
 
     @GetMapping("/logout")
+    @PreAuthorize("hasAuthority('user:write')")
     public ModelAndView logout() {
-        return new ModelAndView("homePage");
+        return new ModelAndView("donePage", "message", userService.logout());
     }
 
     @PostMapping("/register")
@@ -36,6 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/details")
+    @PreAuthorize("hasAuthority('user:write')")
     public ModelAndView getUserDetails() {
         ModelAndView modelAndView = new ModelAndView("userDetails");
         modelAndView.addObject("types", BalanceType.values());
@@ -44,6 +47,7 @@ public class UserController {
     }
 
     @PostMapping("/details")
+    @PreAuthorize("hasAuthority('user:write')")
     public ModelAndView createNewBalance(@RequestParam BalanceType type, @RequestParam long count) {
         return new ModelAndView("donePage", "message", userService.addNewBalance(type, count));
     }
