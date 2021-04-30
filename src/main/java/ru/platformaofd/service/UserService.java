@@ -17,7 +17,9 @@ import ru.platformaofd.model.enums.Role;
 import ru.platformaofd.repository.UserRepository;
 import ru.platformaofd.util.Utils;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -100,12 +102,25 @@ public class UserService {
      * @return объект User - авторизированный пользователь
      */
     public User getLoggedUser() {
-        //TODO Изменить получение списка балансов по условию ТЗ (стрим)
         String loggedUserLogin = SecurityContextHolder.getContext().getAuthentication().getName();
         User loggedUser = getByLogin(loggedUserLogin);
+        List<Balance> filteredList = filterBalanceList(getAllBalancesByUserId(loggedUser.getId()));
 
-        loggedUser.setBalanceList(getAllBalancesByUserId(loggedUser.getId()));
+        loggedUser.setBalanceList(filteredList);
         return loggedUser;
+    }
+
+    /**
+     * Метод сортировки и фильтрации балансов пользователя по определенным условиям, заданным в методе
+     * @param unFiltered несортированный список балансов
+     * @return сортированный список балансов
+     */
+    private List<Balance> filterBalanceList(List<Balance> unFiltered) {
+        return unFiltered.stream()
+                .filter(bal -> bal.getType().name().equals("FIXED"))        // отбрасываем записи, отличающиеся от FIXED
+                .sorted(Comparator.comparing(Balance::getCreated).reversed())      // сортируем по дате (сначала новые)
+                .limit(5)                                                          // кол-во итоговых записей
+                .collect(Collectors.toList());
     }
 
     /**
