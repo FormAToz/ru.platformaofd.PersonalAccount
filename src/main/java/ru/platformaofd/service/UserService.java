@@ -5,13 +5,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.platformaofd.api.response.CodeMessageResponse;
 import ru.platformaofd.exception.TechnicalException;
 import ru.platformaofd.exception.UserAlreadyExistsException;
 import ru.platformaofd.exception.UserNotExistException;
 import ru.platformaofd.model.Balance;
 import ru.platformaofd.model.User;
 import ru.platformaofd.model.enums.BalanceType;
-import ru.platformaofd.model.enums.ErrorCode;
+import ru.platformaofd.model.enums.Code;
 import ru.platformaofd.model.enums.Role;
 import ru.platformaofd.repository.UserRepository;
 import ru.platformaofd.util.Utils;
@@ -38,13 +39,13 @@ public class UserService {
      * @param password пароль пользователя
      * @return строка с сообщением в случае успешной регистрации
      */
-    public String register(String login, String password) {
+    public CodeMessageResponse register(String login, String password) {
         // проверяем существование пользователя в базе
         checkExistingInDbByLogin(login);
         // все пользователи по умолчанию получают роль USER
         saveUser(new User(login, Utils.encodePassword(password), Role.USER));
-        //TODO статус ОК
-        return String.format("Пользователь с логином %s успешно зарегистрирован", login);
+
+        return new CodeMessageResponse(String.format("Пользователь с логином %s успешно зарегистрирован", login), Code.OK);
     }
 
     /**
@@ -56,7 +57,7 @@ public class UserService {
         if (userRepository.existsByLogin(login)) {
             throw new UserAlreadyExistsException(
                     String.format("Пользователь с логином %s уже зарегистрирован", login),
-                    ErrorCode.USER_IS_EXISTS.getCode()
+                    Code.USER_IS_EXISTS.getCode()
             );
         }
     }
@@ -70,7 +71,7 @@ public class UserService {
         if (userRepository.save(user) == 0) {
             throw new TechnicalException(
                     String.format("Ошибка регистрации пользователя с логином %s", user.getLogin()),
-                    ErrorCode.TECHNICAL.getCode()
+                    Code.TECHNICAL.getCode()
             );
         }
     }
@@ -81,20 +82,17 @@ public class UserService {
      * @param password пароль пошльзователя
      * @return строка с сообщением, в случае успешного входа
      */
-    public String login(String login, String password) {
+    public CodeMessageResponse login(String login, String password) {
         Authentication auth = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(login, password));
+
         SecurityContextHolder.getContext().setAuthentication(auth);
-        org.springframework.security.core.userdetails.User user =
-                (org.springframework.security.core.userdetails.User) auth.getPrincipal();
-        //TODO статус ОК
-        return "Вы вошли в систему";
+        return new CodeMessageResponse("Вы вошли в систему", Code.OK);
     }
 
-    public String logout() {
+    public CodeMessageResponse logout() {
         SecurityContextHolder.clearContext();
-        //TODO статус ОК
-        return "Вы вышли из системы";
+        return new CodeMessageResponse("Вы вышли из системы", Code.OK);
     }
 
     /**
@@ -119,7 +117,7 @@ public class UserService {
     public User getByLogin(String login) {
         return userRepository.findByLogin(login).orElseThrow(() -> new UserNotExistException(
                         String.format("Пользователя с логином %s не существует", login),
-                        ErrorCode.USER_NOT_EXISTS.getCode())
+                        Code.USER_NOT_EXISTS.getCode())
         );
     }
 
@@ -137,11 +135,12 @@ public class UserService {
      * @param count скол-во средств на счету баланса
      * @return строка с сообщением, в случае успешного добавления
      */
-    public String addNewBalance(BalanceType type, long count) {
+    public CodeMessageResponse addNewBalance(BalanceType type, long count) {
         User loggedUser = getLoggedUser();
 
         balanceService.saveBalance(new Balance(loggedUser.getId(), type, count));
-        //TODO статус ОК
-        return String.format("Баланс для пользователя \"%s\" успешно добавлен", loggedUser.getLogin());
+        return new CodeMessageResponse(
+                String.format("Баланс для пользователя \"%s\" успешно добавлен", loggedUser.getLogin()),
+                Code.OK);
     }
 }

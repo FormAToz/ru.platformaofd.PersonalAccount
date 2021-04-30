@@ -5,7 +5,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
-import ru.platformaofd.model.enums.ErrorCode;
+import ru.platformaofd.model.enums.Code;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,12 +29,12 @@ public class ExceptionInterceptor {
 
         // в случае ввода неверного логина/пароля
         if (ex instanceof AuthenticationException) {
-            ex = new TechnicalException("Логин или пароль введены неверно!", ErrorCode.PASSWORD_INCORRECT.getCode());
+            ex = new TechnicalException("Логин или пароль введены неверно!", Code.PASSWORD_INCORRECT.getCode());
         }
 
         // в случае доступа без предварительной авторизации
         if (ex instanceof AccessDeniedException) {
-            ex = new TechnicalException("Авторизируйтесь, чтобы получить доступ!", ErrorCode.TECHNICAL.getCode());
+            ex = new TechnicalException("Авторизируйтесь, чтобы получить доступ!", Code.TECHNICAL.getCode());
         }
 
         return new ModelAndView("errorPage", "ex", ex);

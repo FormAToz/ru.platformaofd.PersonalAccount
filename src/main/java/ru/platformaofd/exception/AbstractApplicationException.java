@@ -4,18 +4,18 @@ package ru.platformaofd.exception;
  * Абстрактный класс исключений приложения
  */
 public abstract class AbstractApplicationException extends RuntimeException{
-    protected int errorCode;
+    protected int code;
 
     public AbstractApplicationException(String message, int errorCode) {
         super(message);
-        this.errorCode = errorCode;
+        this.code = errorCode;
     }
 
-    public int getErrorCode() {
-        return errorCode;
+    public int getCode() {
+        return code;
     }
 
-    public void setErrorCode(int errorCode) {
-        this.errorCode = errorCode;
+    public void setCode(int code) {
+        this.code = code;
     }
 }

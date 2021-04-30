@@ -3,7 +3,7 @@ package ru.platformaofd.service;
 import org.springframework.stereotype.Service;
 import ru.platformaofd.exception.TechnicalException;
 import ru.platformaofd.model.Balance;
-import ru.platformaofd.model.enums.ErrorCode;
+import ru.platformaofd.model.enums.Code;
 import ru.platformaofd.repository.BalanceRepository;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class BalanceService {
         if (balanceRepository.save(balance) == 0) {
             throw new TechnicalException(
                     "Ошибка при добавлении нового баланса",
-                    ErrorCode.TECHNICAL.getCode());
+                    Code.TECHNICAL.getCode());
         }
     }
 

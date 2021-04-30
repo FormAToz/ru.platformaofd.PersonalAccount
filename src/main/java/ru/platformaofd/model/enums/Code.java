@@ -1,6 +1,6 @@
 package ru.platformaofd.model.enums;
 
-public enum ErrorCode {
+public enum Code {
     OK(0),
     USER_IS_EXISTS(1),
     TECHNICAL(2),
@@ -9,7 +9,7 @@ public enum ErrorCode {
 
     private final int code;
 
-    ErrorCode(int code) {
+    Code(int code) {
         this.code = code;
     }
 

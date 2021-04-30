@@ -29,12 +29,12 @@ public class UserController {
     @GetMapping("/logout")
     @PreAuthorize("hasAuthority('user:write')")
     public ModelAndView logout() {
-        return new ModelAndView("donePage", "message", userService.logout());
+        return new ModelAndView("donePage", "response", userService.logout());
     }
 
     @PostMapping("/register")
     public ModelAndView register(@RequestParam String login, @RequestParam String password) {
-        return new ModelAndView("donePage", "message", userService.register(login, password));
+        return new ModelAndView("donePage", "response", userService.register(login, password));
     }
 
     @GetMapping("/details")
@@ -49,6 +49,6 @@ public class UserController {
     @PostMapping("/details")
     @PreAuthorize("hasAuthority('user:write')")
     public ModelAndView createNewBalance(@RequestParam BalanceType type, @RequestParam long count) {
-        return new ModelAndView("donePage", "message", userService.addNewBalance(type, count));
+        return new ModelAndView("donePage", "response", userService.addNewBalance(type, count));
     }
 }
